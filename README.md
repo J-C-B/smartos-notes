@@ -8,7 +8,7 @@
 
 ### Download
 
-If you have downloaded as used the CoaL and/or USB packages, new builds are available here:
+https://github.com/joyent/sdc
 
 #### Cloud On A Laptop (VMware):
 ```
