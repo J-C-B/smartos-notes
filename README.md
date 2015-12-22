@@ -2,7 +2,7 @@
 ![OSLOGO](https://wiki.smartos.org/download/attachments/753666/DOC?version=1&modificationDate=1333386297000)
 <br>
 
-#SmartOS, from scratch
+#SmartOS - SmartDataCenter, from scratch
 
 ##Base OS
 
@@ -31,7 +31,7 @@ or
 
 https://wiki.smartos.org/display/DOC/SmartOS+Clean+Re-install
 
-#### boot console change required?
+#### boot console change required, mine did?
 
 ```
 variable os_console vga
@@ -68,10 +68,18 @@ Note: The directory path given assumes you are mounting under /mnt/usbkey. You w
 sdcadm post-setup dev-headnode-prov
 ```
 
-#### In order to downlaod images via SDC, the SDC zone needs an external link
+#### In order to download images via SDC, the SDC zone needs an external link
 
 ```
 sdcadm post-setup common-external-nics
+```
+#### Save disk space with compression
+```
+zfs set compression=on zones && zfs get compression zones
+```
+
+```
+zfs get compressratio zones
 ```
 
 ##### Possible error if via SSH
@@ -174,9 +182,41 @@ https://wiki.smartos.org/display/DOC/Using+vmadm+to+manage+virtual+machines#Usin
 
 https://github.com/TigerVNC/tigervnc/releases
 
+
 connect to **admin IP** and zone port (not zone IP)
 
 ### Tools
+
+http://blog.beulink.org/smartos-mirroring-your-zones-pool/
+
+http://blog.alainodea.com/en/article/448/making-a-zfs-4-disk-mirrored-vdev-zpool-on-smartos-on-r720xd
+
+When prompted at install I selected c0t0d0 as the drive for the zones zpool.
+
+Here is how I made it a mirrored vdev zpool:
+
+```
+zpool attach zones c0t0d0 c0d1t0
+zpool add zones mirror c0t2d0 c0t3d0
+```
+
+Running zpool status shows the following:
+
+```
+ pool: zones
+ state: ONLINE
+  scan: resilvered 4.00G in 0h0m with 0 errors on Fri Jan 18 01:11:15 2013
+config:
+
+        NAME        STATE     READ WRITE CKSUM
+        zones       ONLINE       0     0     0
+          mirror-0  ONLINE       0     0     0
+            c0t0d0  ONLINE       0     0     0
+            c0t1d0  ONLINE       0     0     0
+          mirror-1  ONLINE       0     0     0
+            c0t2d0  ONLINE       0     0     0
+            c0t3d0  ONLINE       0     0     0
+```
 
 http://timboudreau.com/blog/smartos/read
 
