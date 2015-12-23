@@ -2,9 +2,30 @@
 ![OSLOGO](https://wiki.smartos.org/download/attachments/753666/DOC?version=1&modificationDate=1333386297000)
 <br>
 
-#SmartOS - SmartDataCenter, from scratch
+#SmartOS - SmartDataCenter, from scratch, at home, with minimal gear..
 
-##Base OS
+## My Setup
+
+* Dell T601
+* 6i raid card
+* 2 x 300gb drives
+* 2 x 2 tb drives
+* 16 GB ECC ram
+* "Dumb" GB switch (so no vlans for me :( next time...)
+* Old tplink wifi switch (for admin network)
+
+## Before you begin, nuggets of wisdom...
+
+* The **ADMIN** and **External** networks MUST be separate subnets
+	* I used an old wifi router for **admin** on 192.168.10.1, you then need to give your laptop a static IP in that range to connect
+	* The **external** went to my LAN on 192.168.2.x
+	* later when provisioning a machine - ensure they are connected to the **external** network so they show up on your LAN
+	* VNC is bound to the **ADMIN** network so need to connect to that to use it (I'm looking how to move it to the LAN side... but if thats your internet watch for security issues)
+* SDC installer does what it will with your disks, no options during install
+	* So i used 1 x 300gb for the initial install
+	* then before you add any zones follow the "zpool expand" section below (adapt to match your config)
+
+## Base OS
 
 ### Download
 
@@ -31,7 +52,7 @@ or
 
 https://wiki.smartos.org/display/DOC/SmartOS+Clean+Re-install
 
-#### boot console change required, mine did?
+#### boot console change required?... mine did
 
 ```
 variable os_console vga
@@ -51,8 +72,6 @@ To change to a different console device, prior to booting the Live 64 Bit menu i
 
 ### Post Install
 
-https://docs.joyent.com/private-cloud/install/post-installation#AddingExternalNICstoHeadNodeVMs
-
 #### SSH Keys
 
 https://docs.joyent.com/private-cloud/install#sshkeys
@@ -62,13 +81,13 @@ It is possible to have Triton Elastic Container Infrastructure automatically add
 
 Note: The directory path given assumes you are mounting under /mnt/usbkey. You will need to adjust this as appropriate. For example, under /Volumes/HEADNODE if you are mounting it under OS X.
 
-#### If just a headnode, no cluster then need to allow headnode provioning
+#### If just a headnode (no cluster/ other compute nodes) then need to allow headnode provisioning
 
 ```
 sdcadm post-setup dev-headnode-prov
 ```
 
-#### In order to download images via SDC, the SDC zone needs an external link
+#### In order to download images via SDC, the SDC adminui zone needs an external link
 
 ```
 sdcadm post-setup common-external-nics
@@ -82,12 +101,17 @@ zfs set compression=on zones && zfs get compression zones
 zfs get compressratio zones
 ```
 
-##### Possible error if via SSH
+##### Error I got after wiping the zpool and then not fresh installing SDC on USB
+
+I found no way out of this except to go back to make a new SDC image... and start from scratch
+
 ```
 sdcadm post-setup: error: requests must originate from CNAPI address
 ```
 
 #### Patch your "s"
+
+Update!
 
 ```
 sdcadm self-update --latest
@@ -148,6 +172,10 @@ eb4f5b6a-ee95-4283-9b0a-b981dbb00231  OS    1024     192.168.3.72          25   
 fe6b8008-fdcc-44ea-859f-87589a93e25d  OS    8192     192.168.3.61          25     ufds0
 ```
 
+#### Adding more NICs
+
+https://docs.joyent.com/private-cloud/install/post-installation#AddingExternalNICstoHeadNodeVMs
+
 ### Create VMs
 
 #### How to create a Virtual Machine in SmartOS
@@ -185,7 +213,9 @@ https://github.com/TigerVNC/tigervnc/releases
 
 connect to **admin IP** and zone port (not zone IP)
 
-### Tools
+vmadm info <UUID> vnc
+
+### zpool expand
 
 http://blog.beulink.org/smartos-mirroring-your-zones-pool/
 
@@ -218,6 +248,16 @@ config:
             c0t3d0  ONLINE       0     0     0
 ```
 
+If you have mismatched disks like me, start smalles first and create the pool.
+
+now my plan is to replace the 300gb with 2 tb as money allows, so i will turn on auto expand so as i replace the disks the pool grows and i can fit more machines
+
+```
+zpool set autoexpand=on zones
+```
+
+### Tools
+
 http://timboudreau.com/blog/smartos/read
 
 #### GB / MB Rounding
@@ -232,318 +272,6 @@ http://www.convertunits.com/from/GB/to/MB
 
 https://wiki.smartos.org/display/DOC/SmartOS+Command+Line+Tips
 
+## Thanks
 
-
----------------------------
-
-# PFsense Specific (in progress - don't follow!)
-
-https://wiki.smartos.org/display/DOC/Managing+NICs
-
-```
-dladm create-vnic -l e1000g1 pfsenseguest0
-dladm create-vnic -l e1000g0 pfsenselan0
-
-ifconfig pfsenseguest0 plumb
-ifconfig pfsenselan0 plumb
-ifconfig pfsenseguest0 dhcp
-ifconfig pfsenselan0 dhcp
-```
-
-### I generally create a permanent home for ISO images and JSON files:
-
-```
-zfs create zones/images
-```
-* Place the pfSense ISO there
-
-## identify the MAC addresses of the Ethernet interfaces
-```
-dladm show-phys -m
-
-[root@smartoshost ~]# dladm show-phys -m
-LINK         SLOT     ADDRESS            INUSE CLIENT
-bnx0         primary  a4:ba:db:3e:ad:a1  yes  bnx0
-e1000g0      primary  0:15:17:ec:1:d3    yes  e1000g0
-bnx1         primary  a4:ba:db:3e:ad:a3  yes  bnx1
-e1000g2      primary  0:15:17:ec:1:cd    yes  e1000g2
-e1000g1      primary  0:1b:21:57:c:85    yes  e1000g1
-```
-**e1000g0 is probably the 'admin' interface, verify this by viewing /usbkey/config.**
-
-* Then edit /usbkey/config and add a line for the 2nd MAC address as follows:
-
-```
-external_nic=xx:xx:xx:xx:xx:xx (substitute the 2nd MAX address)
-```
-
-* re-boot SmartOS
-* Create the pfsense.json file (below) in zones/images
-* Modify the IP information as appropriate
-* The admin NIC is shared with SmartOS so it should be on the INSIDE (LAN) subnet,
-* the external NIC is the INTERNET/PUBLIC/WAN side
-**Note the vnc port number is specified - this must be unique.**
-**The VM is set to not autoboot - change this later using**
-```
-vmadm update $UUID autoboot=true
-```
-
-
-```
-zfs create zones/images
-```
-
-
-
-```json
-{
-  "brand": "kvm",
-  "vcpus": 1,
-  "ram": 1024,
-  "hostname": "pfsense",
-  "alias": "pfsense",
-  "resolvers": ["192.168.2.1", "8.8.8.8"],
-  "vnc_port": "40000",
-  "autoboot": "false",
-  "disks": [
-    {
-      "boot": true,
-      "model": "ide",
-      "size": 4096
-    }
-  ],
-  "nics": [
-    {
-      "nic_tag": "admin",
-      "model": "e1000",
-      "ip": "192.168.3.1",
-      "netmask": "255.255.0.0",
-      "gateway": "192.168.2.1",
-      "allow_dhcp_spoofing": true,
-      "allow_ip_spoofing": true,
-      "allow_mac_spoofing": true,
-      "allow_restricted_traffic": true,
-      "primary":"1"
-    },
-    {
-      "nic_tag": "external",
-      "model": "e1000",
-      "ip": "192.168.2.30",
-      "netmask": "255.255.0.0",
-      "gateway": "192.168.2.1",
-      "allow_dhcp_spoofing": true,
-      "allow_ip_spoofing": true,
-      "allow_mac_spoofing": true,
-      "allow_restricted_traffic": true
-    },
-    {
-      "nic_tag": "GuestLAN",
-      "model": "e1000",
-      "ip": "192.168.4.2",
-      "netmask": "255.255.0.0",
-      "gateway": "192.168.2.1",
-      "allow_dhcp_spoofing": true,
-      "allow_ip_spoofing": true,
-      "allow_mac_spoofing": true,
-      "allow_restricted_traffic": true
-    }
-  ]
-}
-```
-
-
-```
-vmadm create -f pfsense.json
-```
-substitute the created VM's UUID for $UUID in the following commands, or
-```
-export UUID=zoneuuid
-```
-```
-cp /zones/images/pfSense-LiveCD-2.0.3-RELEASE-amd64.iso  /zones/$UUID/root/
-vmadm boot $UUID order=cd,once=d cdrom=/pfSense-LiveCD-2.0.3-RELEASE-amd64.iso,ide
-```
-
-## This step can probably be done before booting the VM -- and should be, if possible
-
-### examine the active JSON using:
-
-```
-vmadm get $UUID | less
-```
-
-and write down the last 4 digits of the MAC addresses for the admin and external nics, eg:
-
-```
-admin=a9:af
-external=aa:ab
-
-```
-
-```json
-[root@smartoshost /opt]# vmadm get $UUID
-{
-  "zonename": "6362bbce-ff4b-6db3-cdd3-bf6e508242dc",
-  "autoboot": true,
-  "brand": "kvm",
-  "limit_priv": "default,-file_link_any,-net_access,-proc_fork,-proc_info,-proc_session",
-  "v": 1,
-  "create_timestamp": "2015-12-17T01:07:15.174Z",
-  "cpu_shares": 100,
-  "max_lwps": 2000,
-  "max_msg_ids": 4096,
-  "max_sem_ids": 4096,
-  "max_shm_ids": 4096,
-  "max_shm_memory": 2048,
-  "zfs_io_priority": 100,
-  "max_physical_memory": 2048,
-  "max_locked_memory": 2048,
-  "max_swap": 2048,
-  "billing_id": "00000000-0000-0000-0000-000000000000",
-  "owner_uuid": "00000000-0000-0000-0000-000000000000",
-  "hostname": "pfsense",
-  "resolvers": [
-    "192.168.2.1",
-    "8.8.8.8"
-  ],
-  "alias": "pfsense",
-  "ram": 1024,
-  "vcpus": 1,
-  "vnc_port": 40000,
-  "disks": [
-    {
-      "path": "/dev/zvol/rdsk/zones/6362bbce-ff4b-6db3-cdd3-bf6e508242dc-disk0",
-      "boot": true,
-      "model": "ide",
-      "media": "disk",
-      "zfs_filesystem": "zones/6362bbce-ff4b-6db3-cdd3-bf6e508242dc-disk0",
-      "zpool": "zones",
-      "size": 4096,
-      "compression": "off",
-      "refreservation": 4096,
-      "block_size": 8192
-    }
-  ],
-  "nics": [
-    {
-      "interface": "net0",
-      "mac": "b2:64:a0:b2:43:c9",
-      "nic_tag": "admin",
-      "gateway": "192.168.2.1",
-      "gateways": [
-        "192.168.2.1"
-      ],
-      "netmask": "255.255.0.0",
-      "ip": "192.168.2.1",
-      "ips": [
-        "192.168.2.1/16"
-      ],
-      "model": "e1000",
-      "allow_dhcp_spoofing": true,
-      "allow_ip_spoofing": true,
-      "allow_mac_spoofing": true,
-      "allow_restricted_traffic": true,
-      "primary": true
-    },
-    {
-      "interface": "net1",
-      "mac": "e2:26:d1:5e:10:98",
-      "nic_tag": "external",
-      "gateway": "192.168.3.1",
-      "gateways": [
-        "192.168.3.1"
-      ],
-      "netmask": "255.255.0.0",
-      "ip": "192.168.3.2",
-      "ips": [
-        "192.168.3.2/16"
-      ],
-      "model": "e1000",
-      "allow_dhcp_spoofing": true,
-      "allow_ip_spoofing": true,
-      "allow_mac_spoofing": true,
-      "allow_restricted_traffic": true
-    },
-    {
-      "interface": "net2",
-      "mac": "a2:66:b8:9a:ef:70",
-      "nic_tag": "GuestLAN",
-      "gateway": "192.168.2.1",
-      "gateways": [
-        "192.168.2.1"
-      ],
-      "netmask": "255.255.0.0",
-      "ip": "192.168.4.2",
-      "ips": [
-        "192.168.4.2/16"
-      ],
-      "model": "e1000",
-      "allow_dhcp_spoofing": true,
-      "allow_ip_spoofing": true,
-      "allow_mac_spoofing": true,
-      "allow_restricted_traffic": true
-    }
-  ],
-  "uuid": "6362bbce-ff4b-6db3-cdd3-bf6e508242dc",
-  "zone_state": "running",
-  "zonepath": "/zones/6362bbce-ff4b-6db3-cdd3-bf6e508242dc",
-  "zoneid": 4,
-  "last_modified": "2015-12-17T01:09:14.000Z",
-  "firewall_enabled": false,
-  "server_uuid": "44454c4c-4400-1059-804a-c6c04f353253",
-  "platform_buildstamp": "20151210T194528Z",
-  "state": "running",
-  "boot_timestamp": "2015-12-17T01:09:13.000Z",
-  "pid": 7287,
-  "customer_metadata": {},
-  "internal_metadata": {},
-  "routes": {},
-  "tags": {},
-  "quota": 10,
-  "zfs_root_recsize": 131072,
-  "zfs_filesystem": "zones/6362bbce-ff4b-6db3-cdd3-bf6e508242dc",
-  "zpool": "zones",
-  "snapshots": []
-}
-```
-
-##vnc to the IP address and port 40000
-**if you reach the session before the boot timeout occurs, take option "i" to install**
-
-## Respond to prompts as follows:
-
-Accept these options
-
-* Quick/Easy install
-* Standard Kernel
-
-### After the reboot look for some lines that say:
-
-```
-Valid interfaces are:
-# em0   xx:xx:xx:xx:xx:xx
-# em1   xx:xx:xx:xx:xx:xx
-```
-
-Determine which of these matches the "admin" MAC address you noted earlier -- that is your LAN interface!
-
-The other MAC address should match the "external" MAC address you noted - that is your WAN interface!
-
-```
-Do you want to setup VLANs now? N
-Enter the WAN interface name...: em?   (select the interface with a MAC address matching your external_nic)
-Enter the LAN interface name...: em?   (select the interface with a MAC address matching your admin_nic)
-Enter the optional 1 interface name...: (enter)
-```
-```
-From the menu:
-2: Set interface(s) IP address
-remember WAN = external_nic
-enter IP, netmask as prompted
-Do you want to revert to HTTP as the webConfigurator protocol? Y
-```
-
-Repeat menu option #2 for WAN, LAN
-
-* Restart webConfigurator
-* Enable Secure Shell (sshd)
+Thanks to everyone whos posts i have used (to many to mention!) but I have back linked where i had them as a reference.
