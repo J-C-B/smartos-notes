@@ -24,7 +24,42 @@
 <br></p>
 
 <h1>
-<a id="smartos-from-scratch" class="anchor" href="#smartos-from-scratch" aria-hidden="true"><span class="octicon octicon-link"></span></a>SmartOS, from scratch</h1>
+<a id="smartos---smartdatacenter-from-scratch-at-home-with-minimal-gear" class="anchor" href="#smartos---smartdatacenter-from-scratch-at-home-with-minimal-gear" aria-hidden="true"><span class="octicon octicon-link"></span></a>SmartOS - SmartDataCenter, from scratch, at home, with minimal gear..</h1>
+
+<h2>
+<a id="my-setup" class="anchor" href="#my-setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>My Setup</h2>
+
+<ul>
+<li>Dell T601</li>
+<li>6i raid card</li>
+<li>2 x 300gb drives</li>
+<li>2 x 2 tb drives</li>
+<li>16 GB ECC ram</li>
+<li>"Dumb" GB switch (so no vlans for me :( next time...)</li>
+<li>Old tplink wifi switch (for admin network)</li>
+</ul>
+
+<h2>
+<a id="before-you-begin-nuggets-of-wisdom" class="anchor" href="#before-you-begin-nuggets-of-wisdom" aria-hidden="true"><span class="octicon octicon-link"></span></a>Before you begin, nuggets of wisdom...</h2>
+
+<ul>
+<li>The <strong>ADMIN</strong> and <strong>External</strong> networks MUST be separate subnets
+
+<ul>
+<li>I used an old wifi router for <strong>admin</strong> on 192.168.10.1, you then need to give your laptop a static IP in that range to connect</li>
+<li>The <strong>external</strong> went to my LAN on 192.168.2.x</li>
+<li>later when provisioning a machine - ensure they are connected to the <strong>external</strong> network so they show up on your LAN</li>
+<li>VNC is bound to the <strong>ADMIN</strong> network so need to connect to that to use it (I'm looking how to move it to the LAN side... but if thats your internet watch for security issues)</li>
+</ul>
+</li>
+<li>SDC installer does what it will with your disks, no options during install
+
+<ul>
+<li>So i used 1 x 300gb for the initial install</li>
+<li>then before you add any zones follow the "zpool expand" section below (adapt to match your config)</li>
+</ul>
+</li>
+</ul>
 
 <h2>
 <a id="base-os" class="anchor" href="#base-os" aria-hidden="true"><span class="octicon octicon-link"></span></a>Base OS</h2>
@@ -61,7 +96,7 @@
 <p><a href="https://wiki.smartos.org/display/DOC/SmartOS+Clean+Re-install">https://wiki.smartos.org/display/DOC/SmartOS+Clean+Re-install</a></p>
 
 <h4>
-<a id="boot-console-change-required" class="anchor" href="#boot-console-change-required" aria-hidden="true"><span class="octicon octicon-link"></span></a>boot console change required?</h4>
+<a id="boot-console-change-required-mine-did" class="anchor" href="#boot-console-change-required-mine-did" aria-hidden="true"><span class="octicon octicon-link"></span></a>boot console change required?... mine did</h4>
 
 <pre><code>variable os_console vga
 </code></pre>
@@ -82,8 +117,6 @@ To change to a different console device, prior to booting the Live 64 Bit menu i
 <h3>
 <a id="post-install" class="anchor" href="#post-install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Post Install</h3>
 
-<p><a href="https://docs.joyent.com/private-cloud/install/post-installation#AddingExternalNICstoHeadNodeVMs">https://docs.joyent.com/private-cloud/install/post-installation#AddingExternalNICstoHeadNodeVMs</a></p>
-
 <h4>
 <a id="ssh-keys" class="anchor" href="#ssh-keys" aria-hidden="true"><span class="octicon octicon-link"></span></a>SSH Keys</h4>
 
@@ -95,25 +128,38 @@ It is possible to have Triton Elastic Container Infrastructure automatically add
 <p>Note: The directory path given assumes you are mounting under /mnt/usbkey. You will need to adjust this as appropriate. For example, under /Volumes/HEADNODE if you are mounting it under OS X.</p>
 
 <h4>
-<a id="if-just-a-headnode-no-cluster-then-need-to-allow-headnode-provioning" class="anchor" href="#if-just-a-headnode-no-cluster-then-need-to-allow-headnode-provioning" aria-hidden="true"><span class="octicon octicon-link"></span></a>If just a headnode, no cluster then need to allow headnode provioning</h4>
+<a id="if-just-a-headnode-no-cluster-other-compute-nodes-then-need-to-allow-headnode-provisioning" class="anchor" href="#if-just-a-headnode-no-cluster-other-compute-nodes-then-need-to-allow-headnode-provisioning" aria-hidden="true"><span class="octicon octicon-link"></span></a>If just a headnode (no cluster/ other compute nodes) then need to allow headnode provisioning</h4>
 
 <pre><code>sdcadm post-setup dev-headnode-prov
 </code></pre>
 
 <h4>
-<a id="in-order-to-downlaod-images-via-sdc-the-sdc-zone-needs-an-external-link" class="anchor" href="#in-order-to-downlaod-images-via-sdc-the-sdc-zone-needs-an-external-link" aria-hidden="true"><span class="octicon octicon-link"></span></a>In order to downlaod images via SDC, the SDC zone needs an external link</h4>
+<a id="in-order-to-download-images-via-sdc-the-sdc-adminui-zone-needs-an-external-link" class="anchor" href="#in-order-to-download-images-via-sdc-the-sdc-adminui-zone-needs-an-external-link" aria-hidden="true"><span class="octicon octicon-link"></span></a>In order to download images via SDC, the SDC adminui zone needs an external link</h4>
 
 <pre><code>sdcadm post-setup common-external-nics
 </code></pre>
 
+<h4>
+<a id="save-disk-space-with-compression" class="anchor" href="#save-disk-space-with-compression" aria-hidden="true"><span class="octicon octicon-link"></span></a>Save disk space with compression</h4>
+
+<pre><code>zfs set compression=on zones &amp;&amp; zfs get compression zones
+</code></pre>
+
+<pre><code>zfs get compressratio zones
+</code></pre>
+
 <h5>
-<a id="possible-error-if-via-ssh" class="anchor" href="#possible-error-if-via-ssh" aria-hidden="true"><span class="octicon octicon-link"></span></a>Possible error if via SSH</h5>
+<a id="error-i-got-after-wiping-the-zpool-and-then-not-fresh-installing-sdc-on-usb" class="anchor" href="#error-i-got-after-wiping-the-zpool-and-then-not-fresh-installing-sdc-on-usb" aria-hidden="true"><span class="octicon octicon-link"></span></a>Error I got after wiping the zpool and then not fresh installing SDC on USB</h5>
+
+<p>I found no way out of this except to go back to make a new SDC image... and start from scratch</p>
 
 <pre><code>sdcadm post-setup: error: requests must originate from CNAPI address
 </code></pre>
 
 <h4>
 <a id="patch-your-s" class="anchor" href="#patch-your-s" aria-hidden="true"><span class="octicon octicon-link"></span></a>Patch your "s"</h4>
+
+<p>Update!</p>
 
 <pre><code>sdcadm self-update --latest
 
@@ -172,6 +218,11 @@ eb4f5b6a-ee95-4283-9b0a-b981dbb00231  OS    1024     192.168.3.72          25   
 fe6b8008-fdcc-44ea-859f-87589a93e25d  OS    8192     192.168.3.61          25     ufds0
 </code></pre>
 
+<h4>
+<a id="adding-more-nics" class="anchor" href="#adding-more-nics" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding more NICs</h4>
+
+<p><a href="https://docs.joyent.com/private-cloud/install/post-installation#AddingExternalNICstoHeadNodeVMs">https://docs.joyent.com/private-cloud/install/post-installation#AddingExternalNICstoHeadNodeVMs</a></p>
+
 <h3>
 <a id="create-vms" class="anchor" href="#create-vms" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create VMs</h3>
 
@@ -217,6 +268,47 @@ fe6b8008-fdcc-44ea-859f-87589a93e25d  OS    8192     192.168.3.61          25   
 
 <p>connect to <strong>admin IP</strong> and zone port (not zone IP)</p>
 
+<p>vmadm info  vnc</p>
+
+<h3>
+<a id="zpool-expand" class="anchor" href="#zpool-expand" aria-hidden="true"><span class="octicon octicon-link"></span></a>zpool expand</h3>
+
+<p><a href="http://blog.beulink.org/smartos-mirroring-your-zones-pool/">http://blog.beulink.org/smartos-mirroring-your-zones-pool/</a></p>
+
+<p><a href="http://blog.alainodea.com/en/article/448/making-a-zfs-4-disk-mirrored-vdev-zpool-on-smartos-on-r720xd">http://blog.alainodea.com/en/article/448/making-a-zfs-4-disk-mirrored-vdev-zpool-on-smartos-on-r720xd</a></p>
+
+<p>When prompted at install I selected c0t0d0 as the drive for the zones zpool.</p>
+
+<p>Here is how I made it a mirrored vdev zpool:</p>
+
+<pre><code>zpool attach zones c0t0d0 c0d1t0
+zpool add zones mirror c0t2d0 c0t3d0
+</code></pre>
+
+<p>Running zpool status shows the following:</p>
+
+<pre><code> pool: zones
+ state: ONLINE
+  scan: resilvered 4.00G in 0h0m with 0 errors on Fri Jan 18 01:11:15 2013
+config:
+
+        NAME        STATE     READ WRITE CKSUM
+        zones       ONLINE       0     0     0
+          mirror-0  ONLINE       0     0     0
+            c0t0d0  ONLINE       0     0     0
+            c0t1d0  ONLINE       0     0     0
+          mirror-1  ONLINE       0     0     0
+            c0t2d0  ONLINE       0     0     0
+            c0t3d0  ONLINE       0     0     0
+</code></pre>
+
+<p>If you have mismatched disks like me, start smalles first and create the pool.</p>
+
+<p>now my plan is to replace the 300gb with 2 tb as money allows, so i will turn on auto expand so as i replace the disks the pool grows and i can fit more machines</p>
+
+<pre><code>zpool set autoexpand=on zones
+</code></pre>
+
 <h3>
 <a id="tools" class="anchor" href="#tools" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tools</h3>
 
@@ -236,325 +328,10 @@ fe6b8008-fdcc-44ea-859f-87589a93e25d  OS    8192     192.168.3.61          25   
 
 <p><a href="https://wiki.smartos.org/display/DOC/SmartOS+Command+Line+Tips">https://wiki.smartos.org/display/DOC/SmartOS+Command+Line+Tips</a></p>
 
-<hr>
-
-<h1>
-<a id="pfsense-specific-in-progress---dont-follow" class="anchor" href="#pfsense-specific-in-progress---dont-follow" aria-hidden="true"><span class="octicon octicon-link"></span></a>PFsense Specific (in progress - don't follow!)</h1>
-
-<p><a href="https://wiki.smartos.org/display/DOC/Managing+NICs">https://wiki.smartos.org/display/DOC/Managing+NICs</a></p>
-
-<pre><code>dladm create-vnic -l e1000g1 pfsenseguest0
-dladm create-vnic -l e1000g0 pfsenselan0
-
-ifconfig pfsenseguest0 plumb
-ifconfig pfsenselan0 plumb
-ifconfig pfsenseguest0 dhcp
-ifconfig pfsenselan0 dhcp
-</code></pre>
-
-<h3>
-<a id="i-generally-create-a-permanent-home-for-iso-images-and-json-files" class="anchor" href="#i-generally-create-a-permanent-home-for-iso-images-and-json-files" aria-hidden="true"><span class="octicon octicon-link"></span></a>I generally create a permanent home for ISO images and JSON files:</h3>
-
-<pre><code>zfs create zones/images
-</code></pre>
-
-<ul>
-<li>Place the pfSense ISO there</li>
-</ul>
-
 <h2>
-<a id="identify-the-mac-addresses-of-the-ethernet-interfaces" class="anchor" href="#identify-the-mac-addresses-of-the-ethernet-interfaces" aria-hidden="true"><span class="octicon octicon-link"></span></a>identify the MAC addresses of the Ethernet interfaces</h2>
+<a id="thanks" class="anchor" href="#thanks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Thanks</h2>
 
-<pre><code>dladm show-phys -m
-
-[root@smartoshost ~]# dladm show-phys -m
-LINK         SLOT     ADDRESS            INUSE CLIENT
-bnx0         primary  a4:ba:db:3e:ad:a1  yes  bnx0
-e1000g0      primary  0:15:17:ec:1:d3    yes  e1000g0
-bnx1         primary  a4:ba:db:3e:ad:a3  yes  bnx1
-e1000g2      primary  0:15:17:ec:1:cd    yes  e1000g2
-e1000g1      primary  0:1b:21:57:c:85    yes  e1000g1
-</code></pre>
-
-<p><strong>e1000g0 is probably the 'admin' interface, verify this by viewing /usbkey/config.</strong></p>
-
-<ul>
-<li>Then edit /usbkey/config and add a line for the 2nd MAC address as follows:</li>
-</ul>
-
-<pre><code>external_nic=xx:xx:xx:xx:xx:xx (substitute the 2nd MAX address)
-</code></pre>
-
-<ul>
-<li>re-boot SmartOS</li>
-<li>Create the pfsense.json file (below) in zones/images</li>
-<li>Modify the IP information as appropriate</li>
-<li>The admin NIC is shared with SmartOS so it should be on the INSIDE (LAN) subnet,</li>
-<li>the external NIC is the INTERNET/PUBLIC/WAN side
-<strong>Note the vnc port number is specified - this must be unique.</strong>
-<strong>The VM is set to not autoboot - change this later using</strong>
-</li>
-</ul>
-
-<pre><code>vmadm update $UUID autoboot=true
-</code></pre>
-
-<pre><code>zfs create zones/images
-</code></pre>
-
-<div class="highlight highlight-source-json"><pre>{
-  <span class="pl-s"><span class="pl-pds">"</span>brand<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>kvm<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>vcpus<span class="pl-pds">"</span></span>: <span class="pl-c1">1</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>ram<span class="pl-pds">"</span></span>: <span class="pl-c1">1024</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>hostname<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>pfsense<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>alias<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>pfsense<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>resolvers<span class="pl-pds">"</span></span>: [<span class="pl-s"><span class="pl-pds">"</span>192.168.2.1<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>8.8.8.8<span class="pl-pds">"</span></span>],
-  <span class="pl-s"><span class="pl-pds">"</span>vnc_port<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>40000<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>autoboot<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>false<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>disks<span class="pl-pds">"</span></span>: [
-    {
-      <span class="pl-s"><span class="pl-pds">"</span>boot<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>model<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>ide<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>size<span class="pl-pds">"</span></span>: <span class="pl-c1">4096</span>
-    }
-  ],
-  <span class="pl-s"><span class="pl-pds">"</span>nics<span class="pl-pds">"</span></span>: [
-    {
-      <span class="pl-s"><span class="pl-pds">"</span>nic_tag<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>admin<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>model<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>e1000<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>ip<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>192.168.3.1<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>netmask<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>255.255.0.0<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>gateway<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>192.168.2.1<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_dhcp_spoofing<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_ip_spoofing<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_mac_spoofing<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_restricted_traffic<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>primary<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>1<span class="pl-pds">"</span></span>
-    },
-    {
-      <span class="pl-s"><span class="pl-pds">"</span>nic_tag<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>external<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>model<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>e1000<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>ip<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>192.168.2.30<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>netmask<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>255.255.0.0<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>gateway<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>192.168.2.1<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_dhcp_spoofing<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_ip_spoofing<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_mac_spoofing<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_restricted_traffic<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>
-    },
-    {
-      <span class="pl-s"><span class="pl-pds">"</span>nic_tag<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>GuestLAN<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>model<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>e1000<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>ip<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>192.168.4.2<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>netmask<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>255.255.0.0<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>gateway<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>192.168.2.1<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_dhcp_spoofing<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_ip_spoofing<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_mac_spoofing<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_restricted_traffic<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>
-    }
-  ]
-}</pre></div>
-
-<pre><code>vmadm create -f pfsense.json
-</code></pre>
-
-<p>substitute the created VM's UUID for $UUID in the following commands, or</p>
-
-<pre><code>export UUID=zoneuuid
-</code></pre>
-
-<pre><code>cp /zones/images/pfSense-LiveCD-2.0.3-RELEASE-amd64.iso  /zones/$UUID/root/
-vmadm boot $UUID order=cd,once=d cdrom=/pfSense-LiveCD-2.0.3-RELEASE-amd64.iso,ide
-</code></pre>
-
-<h2>
-<a id="this-step-can-probably-be-done-before-booting-the-vm----and-should-be-if-possible" class="anchor" href="#this-step-can-probably-be-done-before-booting-the-vm----and-should-be-if-possible" aria-hidden="true"><span class="octicon octicon-link"></span></a>This step can probably be done before booting the VM -- and should be, if possible</h2>
-
-<h3>
-<a id="examine-the-active-json-using" class="anchor" href="#examine-the-active-json-using" aria-hidden="true"><span class="octicon octicon-link"></span></a>examine the active JSON using:</h3>
-
-<pre><code>vmadm get $UUID | less
-</code></pre>
-
-<p>and write down the last 4 digits of the MAC addresses for the admin and external nics, eg:</p>
-
-<pre><code>admin=a9:af
-external=aa:ab
-
-</code></pre>
-
-<div class="highlight highlight-source-json"><pre>[<span class="pl-ii">root@smartoshost</span> <span class="pl-ii">/opt</span>]# vmadm get $UUID
-{
-  <span class="pl-s"><span class="pl-pds">"</span>zonename<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>6362bbce-ff4b-6db3-cdd3-bf6e508242dc<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>autoboot<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>brand<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>kvm<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>limit_priv<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>default,-file_link_any,-net_access,-proc_fork,-proc_info,-proc_session<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>v<span class="pl-pds">"</span></span>: <span class="pl-c1">1</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>create_timestamp<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>2015-12-17T01:07:15.174Z<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>cpu_shares<span class="pl-pds">"</span></span>: <span class="pl-c1">100</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>max_lwps<span class="pl-pds">"</span></span>: <span class="pl-c1">2000</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>max_msg_ids<span class="pl-pds">"</span></span>: <span class="pl-c1">4096</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>max_sem_ids<span class="pl-pds">"</span></span>: <span class="pl-c1">4096</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>max_shm_ids<span class="pl-pds">"</span></span>: <span class="pl-c1">4096</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>max_shm_memory<span class="pl-pds">"</span></span>: <span class="pl-c1">2048</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>zfs_io_priority<span class="pl-pds">"</span></span>: <span class="pl-c1">100</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>max_physical_memory<span class="pl-pds">"</span></span>: <span class="pl-c1">2048</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>max_locked_memory<span class="pl-pds">"</span></span>: <span class="pl-c1">2048</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>max_swap<span class="pl-pds">"</span></span>: <span class="pl-c1">2048</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>billing_id<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>00000000-0000-0000-0000-000000000000<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>owner_uuid<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>00000000-0000-0000-0000-000000000000<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>hostname<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>pfsense<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>resolvers<span class="pl-pds">"</span></span>: [
-    <span class="pl-s"><span class="pl-pds">"</span>192.168.2.1<span class="pl-pds">"</span></span>,
-    <span class="pl-s"><span class="pl-pds">"</span>8.8.8.8<span class="pl-pds">"</span></span>
-  ],
-  <span class="pl-s"><span class="pl-pds">"</span>alias<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>pfsense<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>ram<span class="pl-pds">"</span></span>: <span class="pl-c1">1024</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>vcpus<span class="pl-pds">"</span></span>: <span class="pl-c1">1</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>vnc_port<span class="pl-pds">"</span></span>: <span class="pl-c1">40000</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>disks<span class="pl-pds">"</span></span>: [
-    {
-      <span class="pl-s"><span class="pl-pds">"</span>path<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>/dev/zvol/rdsk/zones/6362bbce-ff4b-6db3-cdd3-bf6e508242dc-disk0<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>boot<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>model<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>ide<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>media<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>disk<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>zfs_filesystem<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>zones/6362bbce-ff4b-6db3-cdd3-bf6e508242dc-disk0<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>zpool<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>zones<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>size<span class="pl-pds">"</span></span>: <span class="pl-c1">4096</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>compression<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>off<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>refreservation<span class="pl-pds">"</span></span>: <span class="pl-c1">4096</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>block_size<span class="pl-pds">"</span></span>: <span class="pl-c1">8192</span>
-    }
-  ],
-  <span class="pl-s"><span class="pl-pds">"</span>nics<span class="pl-pds">"</span></span>: [
-    {
-      <span class="pl-s"><span class="pl-pds">"</span>interface<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>net0<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>mac<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>b2:64:a0:b2:43:c9<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>nic_tag<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>admin<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>gateway<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>192.168.2.1<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>gateways<span class="pl-pds">"</span></span>: [
-        <span class="pl-s"><span class="pl-pds">"</span>192.168.2.1<span class="pl-pds">"</span></span>
-      ],
-      <span class="pl-s"><span class="pl-pds">"</span>netmask<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>255.255.0.0<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>ip<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>192.168.2.1<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>ips<span class="pl-pds">"</span></span>: [
-        <span class="pl-s"><span class="pl-pds">"</span>192.168.2.1/16<span class="pl-pds">"</span></span>
-      ],
-      <span class="pl-s"><span class="pl-pds">"</span>model<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>e1000<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_dhcp_spoofing<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_ip_spoofing<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_mac_spoofing<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_restricted_traffic<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>primary<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>
-    },
-    {
-      <span class="pl-s"><span class="pl-pds">"</span>interface<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>net1<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>mac<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>e2:26:d1:5e:10:98<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>nic_tag<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>external<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>gateway<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>192.168.3.1<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>gateways<span class="pl-pds">"</span></span>: [
-        <span class="pl-s"><span class="pl-pds">"</span>192.168.3.1<span class="pl-pds">"</span></span>
-      ],
-      <span class="pl-s"><span class="pl-pds">"</span>netmask<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>255.255.0.0<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>ip<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>192.168.3.2<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>ips<span class="pl-pds">"</span></span>: [
-        <span class="pl-s"><span class="pl-pds">"</span>192.168.3.2/16<span class="pl-pds">"</span></span>
-      ],
-      <span class="pl-s"><span class="pl-pds">"</span>model<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>e1000<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_dhcp_spoofing<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_ip_spoofing<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_mac_spoofing<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_restricted_traffic<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>
-    },
-    {
-      <span class="pl-s"><span class="pl-pds">"</span>interface<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>net2<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>mac<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>a2:66:b8:9a:ef:70<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>nic_tag<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>GuestLAN<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>gateway<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>192.168.2.1<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>gateways<span class="pl-pds">"</span></span>: [
-        <span class="pl-s"><span class="pl-pds">"</span>192.168.2.1<span class="pl-pds">"</span></span>
-      ],
-      <span class="pl-s"><span class="pl-pds">"</span>netmask<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>255.255.0.0<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>ip<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>192.168.4.2<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>ips<span class="pl-pds">"</span></span>: [
-        <span class="pl-s"><span class="pl-pds">"</span>192.168.4.2/16<span class="pl-pds">"</span></span>
-      ],
-      <span class="pl-s"><span class="pl-pds">"</span>model<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>e1000<span class="pl-pds">"</span></span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_dhcp_spoofing<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_ip_spoofing<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_mac_spoofing<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
-      <span class="pl-s"><span class="pl-pds">"</span>allow_restricted_traffic<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>
-    }
-  ],
-  <span class="pl-s"><span class="pl-pds">"</span>uuid<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>6362bbce-ff4b-6db3-cdd3-bf6e508242dc<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>zone_state<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>running<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>zonepath<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>/zones/6362bbce-ff4b-6db3-cdd3-bf6e508242dc<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>zoneid<span class="pl-pds">"</span></span>: <span class="pl-c1">4</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>last_modified<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>2015-12-17T01:09:14.000Z<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>firewall_enabled<span class="pl-pds">"</span></span>: <span class="pl-c1">false</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>server_uuid<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>44454c4c-4400-1059-804a-c6c04f353253<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>platform_buildstamp<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>20151210T194528Z<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>state<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>running<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>boot_timestamp<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>2015-12-17T01:09:13.000Z<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>pid<span class="pl-pds">"</span></span>: <span class="pl-c1">7287</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>customer_metadata<span class="pl-pds">"</span></span>: {},
-  <span class="pl-s"><span class="pl-pds">"</span>internal_metadata<span class="pl-pds">"</span></span>: {},
-  <span class="pl-s"><span class="pl-pds">"</span>routes<span class="pl-pds">"</span></span>: {},
-  <span class="pl-s"><span class="pl-pds">"</span>tags<span class="pl-pds">"</span></span>: {},
-  <span class="pl-s"><span class="pl-pds">"</span>quota<span class="pl-pds">"</span></span>: <span class="pl-c1">10</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>zfs_root_recsize<span class="pl-pds">"</span></span>: <span class="pl-c1">131072</span>,
-  <span class="pl-s"><span class="pl-pds">"</span>zfs_filesystem<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>zones/6362bbce-ff4b-6db3-cdd3-bf6e508242dc<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>zpool<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>zones<span class="pl-pds">"</span></span>,
-  <span class="pl-s"><span class="pl-pds">"</span>snapshots<span class="pl-pds">"</span></span>: []
-}</pre></div>
-
-<h2>
-<a id="vnc-to-the-ip-address-and-port-40000" class="anchor" href="#vnc-to-the-ip-address-and-port-40000" aria-hidden="true"><span class="octicon octicon-link"></span></a>vnc to the IP address and port 40000</h2>
-
-<p><strong>if you reach the session before the boot timeout occurs, take option "i" to install</strong></p>
-
-<h2>
-<a id="respond-to-prompts-as-follows" class="anchor" href="#respond-to-prompts-as-follows" aria-hidden="true"><span class="octicon octicon-link"></span></a>Respond to prompts as follows:</h2>
-
-<p>Accept these options</p>
-
-<ul>
-<li>Quick/Easy install</li>
-<li>Standard Kernel</li>
-</ul>
-
-<h3>
-<a id="after-the-reboot-look-for-some-lines-that-say" class="anchor" href="#after-the-reboot-look-for-some-lines-that-say" aria-hidden="true"><span class="octicon octicon-link"></span></a>After the reboot look for some lines that say:</h3>
-
-<pre><code>Valid interfaces are:
-# em0   xx:xx:xx:xx:xx:xx
-# em1   xx:xx:xx:xx:xx:xx
-</code></pre>
-
-<p>Determine which of these matches the "admin" MAC address you noted earlier -- that is your LAN interface!</p>
-
-<p>The other MAC address should match the "external" MAC address you noted - that is your WAN interface!</p>
-
-<pre><code>Do you want to setup VLANs now? N
-Enter the WAN interface name...: em?   (select the interface with a MAC address matching your external_nic)
-Enter the LAN interface name...: em?   (select the interface with a MAC address matching your admin_nic)
-Enter the optional 1 interface name...: (enter)
-</code></pre>
-
-<pre><code>From the menu:
-2: Set interface(s) IP address
-remember WAN = external_nic
-enter IP, netmask as prompted
-Do you want to revert to HTTP as the webConfigurator protocol? Y
-</code></pre>
-
-<p>Repeat menu option #2 for WAN, LAN</p>
-
-<ul>
-<li>Restart webConfigurator</li>
-<li>Enable Secure Shell (sshd)</li>
-</ul>
+<p>Thanks to everyone whos posts i have used (to many to mention!) but I have back linked where i had them as a reference.</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/J-C-B/smartos-notes">Smartos-notes</a> is maintained by <a href="https://github.com/J-C-B">J-C-B</a>.</span>
