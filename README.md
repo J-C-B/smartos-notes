@@ -125,6 +125,12 @@ Updated to sdcadm 1.9.0 (master-20151221T171321Z-gabeeae7, elapsed 24s)
 
 ```
 
+https://github.com/joyent/sdcadm/blob/master/docs/update.md
+
+```
+
+```
+
 #### Find your Admin UI ip address
 
 To connect to the admin UI you need its IP.... find it with this command
@@ -134,6 +140,14 @@ To connect to the admin UI you need its IP.... find it with this command
 vmadm list -o uuid,type,ram,nics.0.ip,quota,alias | grep -v KVM
 
 ```
+
+OR to try your other nic (admin v's external for example)
+
+```
+vmadm list -o uuid,type,ram,nics.1.ip,quota,alias | grep -v KVM
+
+```
+
 and look for
 
 ```
@@ -221,6 +235,33 @@ http://blog.beulink.org/smartos-mirroring-your-zones-pool/
 
 http://blog.alainodea.com/en/article/448/making-a-zfs-4-disk-mirrored-vdev-zpool-on-smartos-on-r720xd
 
+http://prefetch.net/blog/index.php/2007/01/04/adding-a-mirror-to-a-device-in-a-zfs-pool/
+
+http://prefetch.net/blog/index.php/2011/10/15/using-the-zfs-scrub-feature-to-verify-the-integrity-of-your-storage/
+
+
+```
+Adding a mirror to a device in a ZFS pool
+In one of my previous posts, I discussed how to add a disk to a ZFS pool. One thing I failed to mention was the fact that adding a device in this manner creates a second stripe in the pool, which adds no redundancy (in that specific example, I was using hardware RAID). Instead of using the zfs “add” command to add a second stripe to the pool, I could have instead used the “attach” option to create a two way mirror from the existing device:
+$ zpool attach system c1d0s0 c2d0s0
+The attach operation will cause a new top level “mirror” vdev (virtual device) to be created, and both devices will then be associated with that vdev. Once the attach completes, the first device will be synced to the second device. You can monitor the synchronization progress with the zpool utility:
+$ zpool status -v
+pool: system
+state: ONLINE
+status: One or more devices is currently being resilvered.  The pool will
+        continue to function, possibly in a degraded state.
+action: Wait for the resilver to complete.
+scrub: resilver in progress, 3.13% done, 0h15m to go
+config:
+
+        NAME        STATE     READ WRITE CKSUM
+        system      ONLINE       0     0     0
+          mirror    ONLINE       0     0     0
+            c1d0s0  ONLINE       0     0     0
+            c2d0s0  ONLINE       0     0     0
+The more I work with ZFS, the more I dig it!
+```
+
 When prompted at install I selected c0t0d0 as the drive for the zones zpool.
 
 Here is how I made it a mirrored vdev zpool:
@@ -228,6 +269,57 @@ Here is how I made it a mirrored vdev zpool:
 ```
 zpool attach zones c0t0d0 c0d1t0
 zpool add zones mirror c0t2d0 c0t3d0
+
+```
+
+note if adding a mirror to a single disk you need to add to the exising disk using 
+
+```
+zpool attach zones existingdisk newdisk
+```
+Output
+
+```
+
+[root@headnode (hatfields) ~]# zpool status
+  pool: zones
+ state: ONLINE
+  scan: resilvered 49.6G in 0h15m with 0 errors on Wed Dec 23 22:28:07 2015
+config:
+
+        NAME        STATE     READ WRITE CKSUM
+        zones       ONLINE       0     0     0
+          mirror-0  ONLINE       0     0     0
+            c0t0d0  ONLINE       0     0     0
+            c0t2d0  ONLINE       0     0     0
+          c0t1d0    ONLINE       0     0     0
+
+
+[root@headnode (hatfields) ~]# zpool attach zones c0t1d0 c0t3d0
+
+[root@headnode (hatfields) ~]# zpool status
+  pool: zones
+ state: ONLINE
+status: One or more devices is currently being resilvered.  The pool will
+        continue to function, possibly in a degraded state.
+action: Wait for the resilver to complete.
+  scan: resilver in progress since Thu Dec 24 01:06:57 2015
+    8.58G scanned out of 24.9G at 732M/s, 0h0m to go
+    6.40M resilvered, 34.51% done
+config:
+
+        NAME        STATE     READ WRITE CKSUM
+        zones       ONLINE       0     0     0
+          mirror-0  ONLINE       0     0     0
+            c0t0d0  ONLINE       0     0     0
+            c0t2d0  ONLINE       0     0     0
+          mirror-1  ONLINE       0     0     0
+            c0t1d0  ONLINE       0     0     0
+            c0t3d0  ONLINE       0     0     0  (resilvering)
+
+
+
+
 ```
 
 Running zpool status shows the following:
