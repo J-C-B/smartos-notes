@@ -24,10 +24,10 @@
 <br></p>
 
 <h1>
-<a id="smartos---smartdatacenter-from-scratch-at-home-with-minimal-gear" class="anchor" href="#smartos---smartdatacenter-from-scratch-at-home-with-minimal-gear" aria-hidden="true"><span class="octicon octicon-link"></span></a>SmartOS - SmartDataCenter, from scratch, at home, with minimal gear..</h1>
+<a id="smartos---smartdatacenter-from-scratch-at-home-with-minimal-gear" class="anchor" href="#smartos---smartdatacenter-from-scratch-at-home-with-minimal-gear" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>SmartOS - SmartDataCenter, from scratch, at home, with minimal gear..</h1>
 
 <h2>
-<a id="my-setup" class="anchor" href="#my-setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>My Setup</h2>
+<a id="my-setup" class="anchor" href="#my-setup" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>My Setup</h2>
 
 <ul>
 <li>Dell T601</li>
@@ -40,7 +40,7 @@
 </ul>
 
 <h2>
-<a id="before-you-begin-nuggets-of-wisdom" class="anchor" href="#before-you-begin-nuggets-of-wisdom" aria-hidden="true"><span class="octicon octicon-link"></span></a>Before you begin, nuggets of wisdom...</h2>
+<a id="before-you-begin-nuggets-of-wisdom" class="anchor" href="#before-you-begin-nuggets-of-wisdom" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Before you begin, nuggets of wisdom...</h2>
 
 <ul>
 <li>The <strong>ADMIN</strong> and <strong>External</strong> networks MUST be separate subnets
@@ -62,32 +62,32 @@
 </ul>
 
 <h2>
-<a id="base-os" class="anchor" href="#base-os" aria-hidden="true"><span class="octicon octicon-link"></span></a>Base OS</h2>
+<a id="base-os" class="anchor" href="#base-os" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Base OS</h2>
 
 <h3>
-<a id="download" class="anchor" href="#download" aria-hidden="true"><span class="octicon octicon-link"></span></a>Download</h3>
+<a id="download" class="anchor" href="#download" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Download</h3>
 
 <p><a href="https://github.com/joyent/sdc">https://github.com/joyent/sdc</a></p>
 
 <h4>
-<a id="cloud-on-a-laptop-vmware" class="anchor" href="#cloud-on-a-laptop-vmware" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cloud On A Laptop (VMware):</h4>
+<a id="cloud-on-a-laptop-vmware" class="anchor" href="#cloud-on-a-laptop-vmware" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Cloud On A Laptop (VMware):</h4>
 
 <pre><code>curl -C - -O https://us-east.manta.joyent.com/Joyent_Dev/public/SmartDataCenter/coal-latest.tgz
 </code></pre>
 
 <h4>
-<a id="usb-key-image" class="anchor" href="#usb-key-image" aria-hidden="true"><span class="octicon octicon-link"></span></a>USB key image:</h4>
+<a id="usb-key-image" class="anchor" href="#usb-key-image" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>USB key image:</h4>
 
 <pre><code>curl -C - -O https://us-east.manta.joyent.com/Joyent_Dev/public/SmartDataCenter/usb-latest.tgz
 </code></pre>
 
 <h4>
-<a id="make-usb-key" class="anchor" href="#make-usb-key" aria-hidden="true"><span class="octicon octicon-link"></span></a>Make USB key</h4>
+<a id="make-usb-key" class="anchor" href="#make-usb-key" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Make USB key</h4>
 
 <p><a href="https://docs.joyent.com/private-cloud/install/usb-key/mac-osx">https://docs.joyent.com/private-cloud/install/usb-key/mac-osx</a></p>
 
 <h3>
-<a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h3>
+<a id="install" class="anchor" href="#install" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install</h3>
 
 <p><a href="https://docs.joyent.com/private-cloud/install">https://docs.joyent.com/private-cloud/install</a></p>
 
@@ -95,8 +95,12 @@
 
 <p><a href="https://wiki.smartos.org/display/DOC/SmartOS+Clean+Re-install">https://wiki.smartos.org/display/DOC/SmartOS+Clean+Re-install</a></p>
 
+<p>or</p>
+
+<p><a href="https://wiki.smartos.org/display/DOC/Install+SDC+on+SmartOS">https://wiki.smartos.org/display/DOC/Install+SDC+on+SmartOS</a></p>
+
 <h4>
-<a id="boot-console-change-required-mine-did" class="anchor" href="#boot-console-change-required-mine-did" aria-hidden="true"><span class="octicon octicon-link"></span></a>boot console change required?... mine did</h4>
+<a id="boot-console-change-required-mine-did" class="anchor" href="#boot-console-change-required-mine-did" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>boot console change required?... mine did</h4>
 
 <pre><code>variable os_console vga
 </code></pre>
@@ -115,10 +119,10 @@ To change to a different console device, prior to booting the Live 64 Bit menu i
 </ul>
 
 <h3>
-<a id="post-install" class="anchor" href="#post-install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Post Install</h3>
+<a id="post-install" class="anchor" href="#post-install" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Post Install</h3>
 
 <h4>
-<a id="ssh-keys" class="anchor" href="#ssh-keys" aria-hidden="true"><span class="octicon octicon-link"></span></a>SSH Keys</h4>
+<a id="ssh-keys" class="anchor" href="#ssh-keys" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>SSH Keys</h4>
 
 <p><a href="https://docs.joyent.com/private-cloud/install#sshkeys">https://docs.joyent.com/private-cloud/install#sshkeys</a></p>
 
@@ -128,19 +132,19 @@ It is possible to have Triton Elastic Container Infrastructure automatically add
 <p>Note: The directory path given assumes you are mounting under /mnt/usbkey. You will need to adjust this as appropriate. For example, under /Volumes/HEADNODE if you are mounting it under OS X.</p>
 
 <h4>
-<a id="if-just-a-headnode-no-cluster-other-compute-nodes-then-need-to-allow-headnode-provisioning" class="anchor" href="#if-just-a-headnode-no-cluster-other-compute-nodes-then-need-to-allow-headnode-provisioning" aria-hidden="true"><span class="octicon octicon-link"></span></a>If just a headnode (no cluster/ other compute nodes) then need to allow headnode provisioning</h4>
+<a id="if-just-a-headnode-no-cluster-other-compute-nodes-then-need-to-allow-headnode-provisioning" class="anchor" href="#if-just-a-headnode-no-cluster-other-compute-nodes-then-need-to-allow-headnode-provisioning" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>If just a headnode (no cluster/ other compute nodes) then need to allow headnode provisioning</h4>
 
 <pre><code>sdcadm post-setup dev-headnode-prov
 </code></pre>
 
 <h4>
-<a id="in-order-to-download-images-via-sdc-the-sdc-adminui-zone-needs-an-external-link" class="anchor" href="#in-order-to-download-images-via-sdc-the-sdc-adminui-zone-needs-an-external-link" aria-hidden="true"><span class="octicon octicon-link"></span></a>In order to download images via SDC, the SDC adminui zone needs an external link</h4>
+<a id="in-order-to-download-images-via-sdc-the-sdc-adminui-zone-needs-an-external-link" class="anchor" href="#in-order-to-download-images-via-sdc-the-sdc-adminui-zone-needs-an-external-link" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>In order to download images via SDC, the SDC adminui zone needs an external link</h4>
 
 <pre><code>sdcadm post-setup common-external-nics
 </code></pre>
 
 <h4>
-<a id="save-disk-space-with-compression" class="anchor" href="#save-disk-space-with-compression" aria-hidden="true"><span class="octicon octicon-link"></span></a>Save disk space with compression</h4>
+<a id="save-disk-space-with-compression" class="anchor" href="#save-disk-space-with-compression" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Save disk space with compression</h4>
 
 <pre><code>zfs set compression=on zones &amp;&amp; zfs get compression zones
 </code></pre>
@@ -149,7 +153,7 @@ It is possible to have Triton Elastic Container Infrastructure automatically add
 </code></pre>
 
 <h5>
-<a id="error-i-got-after-wiping-the-zpool-and-then-not-fresh-installing-sdc-on-usb" class="anchor" href="#error-i-got-after-wiping-the-zpool-and-then-not-fresh-installing-sdc-on-usb" aria-hidden="true"><span class="octicon octicon-link"></span></a>Error I got after wiping the zpool and then not fresh installing SDC on USB</h5>
+<a id="error-i-got-after-wiping-the-zpool-and-then-not-fresh-installing-sdc-on-usb" class="anchor" href="#error-i-got-after-wiping-the-zpool-and-then-not-fresh-installing-sdc-on-usb" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Error I got after wiping the zpool and then not fresh installing SDC on USB</h5>
 
 <p>I found no way out of this except to go back to make a new SDC image... and start from scratch</p>
 
@@ -157,27 +161,96 @@ It is possible to have Triton Elastic Container Infrastructure automatically add
 </code></pre>
 
 <h4>
-<a id="patch-your-s" class="anchor" href="#patch-your-s" aria-hidden="true"><span class="octicon octicon-link"></span></a>Patch your "s"</h4>
+<a id="patch-your-s" class="anchor" href="#patch-your-s" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Patch your "s"</h4>
 
 <p>Update!</p>
 
+<h5>
+<a id="zones" class="anchor" href="#zones" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Zones</h5>
+
 <pre><code>sdcadm self-update --latest
+</code></pre>
 
-OUTPUT
+<p>Output</p>
 
-Update to sdcadm 1.9.0 (master-20151221T171321Z-gabeeae7)
+<pre><code>Update to sdcadm 1.9.0 (master-20151221T171321Z-gabeeae7)
 Download update from https://updates.joyent.com
 Run sdcadm installer (log at /var/sdcadm/self-updates/20151222T062616Z/install.log)
 Updated to sdcadm 1.9.0 (master-20151221T171321Z-gabeeae7, elapsed 24s)
 
 </code></pre>
 
+<p><a href="https://github.com/joyent/sdcadm/blob/master/docs/update.md">https://github.com/joyent/sdcadm/blob/master/docs/update.md</a></p>
+
+<h5>
+<a id="usb--platform" class="anchor" href="#usb--platform" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>USB / Platform</h5>
+
+<p>This is to get the latest release of SmartOS: </p>
+
+<pre><code>sdcadm platform install --latest
+</code></pre>
+
+<p>Then you need to assign it with example: </p>
+
+<pre><code>sdcadm platform assign 20160121T174713Z --all
+</code></pre>
+
+<p>Then reboot the compute/headnode and verify what the platform is: </p>
+
+<pre><code>uname -v
+</code></pre>
+
+<p>Typical output</p>
+
+<pre><code>[root@headnode (hat) ~]# sdcadm platform install --latest
+Using channel release
+Checking latest Platform Image is already installed
+Downloading platform 20160121T174713Z
+    image 14008049-711d-4417-b2bd-0c91d6e32bd0
+    to /var/tmp/platform-release-20160121-20160121T174713Z.tgz
+Installing Platform Image onto USB key
+==&gt; Mounting USB key
+==&gt; Staging 20160121T174713Z
+######################################################################## 100.0%
+==&gt; Unpacking 20160121T174713Z to /mnt/usbkey/os
+==&gt; This may take a while...
+==&gt; Copying 20160121T174713Z to /usbkey/os
+==&gt; Unmounting USB Key
+==&gt; Adding to list of available platforms
+==&gt; Done!
+Platform installer finished successfully
+Proceeding to complete the update
+Installation complete
+You have new mail in /var/mail/root
+[root@headnode (hat) ~]# uname -v
+joyent_20151210T064915Z
+You have new mail in /var/mail/root
+[root@headnode (hat) ~]# sdcadm platform assign 20160121T174713Z --all
+updating headnode 002590d5-384a-0607-0025-90d5384a0e0f to 20160121T174713Z
+Setting boot params for 002590d5-384a-0607-0025-90d5384a0e0f
+Updating booter cache for servers
+Done updating booter caches
+Verifying boot_platform updates
+Cleaned up deprecated 'latest' symlink
+Updating default boot platform to '20160121T174713Z'
+[root@headnode (hat) ~]# uname -v
+joyent_20151210T064915Z
+[root@headnode (hat) ~]#
+
+</code></pre>
+
 <h4>
-<a id="find-your-admin-ui-ip-address" class="anchor" href="#find-your-admin-ui-ip-address" aria-hidden="true"><span class="octicon octicon-link"></span></a>Find your Admin UI ip address</h4>
+<a id="find-your-admin-ui-ip-address" class="anchor" href="#find-your-admin-ui-ip-address" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Find your Admin UI ip address</h4>
 
 <p>To connect to the admin UI you need its IP.... find it with this command</p>
 
 <pre><code>vmadm list -o uuid,type,ram,nics.0.ip,quota,alias | grep -v KVM
+
+</code></pre>
+
+<p>OR to try your other nic (admin v's external for example)</p>
+
+<pre><code>vmadm list -o uuid,type,ram,nics.1.ip,quota,alias | grep -v KVM
 
 </code></pre>
 
@@ -219,50 +292,91 @@ fe6b8008-fdcc-44ea-859f-87589a93e25d  OS    8192     192.168.3.61          25   
 </code></pre>
 
 <h4>
-<a id="adding-more-nics" class="anchor" href="#adding-more-nics" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding more NICs</h4>
+<a id="adding-more-nics" class="anchor" href="#adding-more-nics" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Adding more NICs</h4>
 
 <p><a href="https://docs.joyent.com/private-cloud/install/post-installation#AddingExternalNICstoHeadNodeVMs">https://docs.joyent.com/private-cloud/install/post-installation#AddingExternalNICstoHeadNodeVMs</a></p>
 
 <h3>
-<a id="create-vms" class="anchor" href="#create-vms" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create VMs</h3>
+<a id="create-vms" class="anchor" href="#create-vms" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Create VMs</h3>
 
 <h4>
-<a id="how-to-create-a-virtual-machine-in-smartos" class="anchor" href="#how-to-create-a-virtual-machine-in-smartos" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to create a Virtual Machine in SmartOS</h4>
+<a id="how-to-create-a-virtual-machine-in-smartos" class="anchor" href="#how-to-create-a-virtual-machine-in-smartos" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to create a Virtual Machine in SmartOS</h4>
 
 <p><a href="https://wiki.smartos.org/display/DOC/How+to+create+a+Virtual+Machine+in+SmartOS">https://wiki.smartos.org/display/DOC/How+to+create+a+Virtual+Machine+in+SmartOS</a></p>
 
 <h4>
-<a id="kvms-general" class="anchor" href="#kvms-general" aria-hidden="true"><span class="octicon octicon-link"></span></a>KVMs (General)</h4>
+<a id="kvms-general" class="anchor" href="#kvms-general" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>KVMs (General)</h4>
 
 <p><a href="https://wiki.smartos.org/display/DOC/How+to+create+a+KVM+VM+(+Hypervisor+virtualized+machine+)+in+SmartOS">https://wiki.smartos.org/display/DOC/How+to+create+a+KVM+VM+(+Hypervisor+virtualized+machine+)+in+SmartOS</a></p>
 
 <h4>
-<a id="docker" class="anchor" href="#docker" aria-hidden="true"><span class="octicon octicon-link"></span></a>Docker</h4>
+<a id="docker" class="anchor" href="#docker" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Docker</h4>
 
 <p><a href="https://docs.joyent.com/private-cloud/install/post-installation#setting-up-docker">https://docs.joyent.com/private-cloud/install/post-installation#setting-up-docker</a></p>
 
 <h4>
-<a id="plex" class="anchor" href="#plex" aria-hidden="true"><span class="octicon octicon-link"></span></a>Plex</h4>
+<a id="plex" class="anchor" href="#plex" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Plex</h4>
 
 <p><a href="http://lightsandshapes.com/plex-on-smartos.html">http://lightsandshapes.com/plex-on-smartos.html</a></p>
 
 <h4>
-<a id="pfsense" class="anchor" href="#pfsense" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pfsense</h4>
+<a id="pfsense" class="anchor" href="#pfsense" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Pfsense</h4>
 
 <p><a href="https://forum.pfsense.org/index.php?topic=69820.0">https://forum.pfsense.org/index.php?topic=69820.0</a></p>
 
 <h4>
-<a id="smartos-vm-migration-using-dd--netcat" class="anchor" href="#smartos-vm-migration-using-dd--netcat" aria-hidden="true"><span class="octicon octicon-link"></span></a>SmartOS VM Migration using DD &amp; Netcat</h4>
+<a id="smartos-vm-migration-using-dd--netcat" class="anchor" href="#smartos-vm-migration-using-dd--netcat" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>SmartOS VM Migration using DD &amp; Netcat</h4>
 
 <p><a href="https://www.youtube.com/watch?v=7xrb_WZZ-Cs">https://www.youtube.com/watch?v=7xrb_WZZ-Cs</a></p>
 
 <h3>
-<a id="delete--manage-existing-vms" class="anchor" href="#delete--manage-existing-vms" aria-hidden="true"><span class="octicon octicon-link"></span></a>Delete / manage existing VMs</h3>
+<a id="delete--manage-existing-vms" class="anchor" href="#delete--manage-existing-vms" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Delete / manage existing VMs</h3>
 
 <p><a href="https://wiki.smartos.org/display/DOC/Using+vmadm+to+manage+virtual+machines#Usingvmadmtomanagevirtualmachines-DeletingaVM">https://wiki.smartos.org/display/DOC/Using+vmadm+to+manage+virtual+machines#Usingvmadmtomanagevirtualmachines-DeletingaVM</a></p>
 
 <h3>
-<a id="vnc-notes" class="anchor" href="#vnc-notes" aria-hidden="true"><span class="octicon octicon-link"></span></a>VNC notes</h3>
+<a id="disk-full-issue" class="anchor" href="#disk-full-issue" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Disk full issue</h3>
+
+<p>ENOSPC, open '/zones...metadata.json'
+SmartOS.</p>
+
+<p>Issuing this command</p>
+
+<p>vmadm update f7c4fbb0-aa35-41d4-9d21-614caba785c7 max_physical_memory=2048</p>
+
+<p>I got an error like</p>
+
+<p>ENOSPC, open '/zones/f7c4fbb0-aa35-41d4-9d21-614caba785c7/config/metadata.json'</p>
+
+<p>I try to enter in the zone</p>
+
+<p>zlogin f7c4fbb0-aa35-41d4-9d21-614caba785c7</p>
+
+<p>but I got</p>
+
+<p>[Connected to zone 'f7c4fbb0-aa35-41d4-9d21-614caba785c7' pts/12]
+No utmpx entry. You must exec "login" from the lowest level "shell".</p>
+
+<p>[Connection to zone 'f7c4fbb0-aa35-41d4-9d21-614caba785c7' pts/12 closed]</p>
+
+<p>WTF?</p>
+
+<p>The zone reached the zfs disk quota. Disk full.</p>
+
+<p>But also
+vmadm update f7c4fbb0-aa35-41d4-9d21-614caba785c7 quota=50
+returns
+ENOSPC, open '/zones/f7c4fbb0-aa35-41d4-9d21-614caba785c7/config/metadata.json'</p>
+
+<p>So the solution is simple:</p>
+
+<p>zfs set quota=40G zones/f7c4fbb0-aa35-41d4-9d21-614caba785c7</p>
+
+<p>vmadm update f7c4fbb0-aa35-41d4-9d21-614caba785c7 max_physical_memory=2048
+Successfully updated VM f7c4fbb0-aa35-41d4-9d21-614caba785c7</p>
+
+<h3>
+<a id="vnc-notes" class="anchor" href="#vnc-notes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>VNC notes</h3>
 
 <p><a href="https://github.com/TigerVNC/tigervnc/releases">https://github.com/TigerVNC/tigervnc/releases</a></p>
 
@@ -271,11 +385,36 @@ fe6b8008-fdcc-44ea-859f-87589a93e25d  OS    8192     192.168.3.61          25   
 <p>vmadm info  vnc</p>
 
 <h3>
-<a id="zpool-expand" class="anchor" href="#zpool-expand" aria-hidden="true"><span class="octicon octicon-link"></span></a>zpool expand</h3>
+<a id="zpool-expand" class="anchor" href="#zpool-expand" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>zpool expand</h3>
 
 <p><a href="http://blog.beulink.org/smartos-mirroring-your-zones-pool/">http://blog.beulink.org/smartos-mirroring-your-zones-pool/</a></p>
 
 <p><a href="http://blog.alainodea.com/en/article/448/making-a-zfs-4-disk-mirrored-vdev-zpool-on-smartos-on-r720xd">http://blog.alainodea.com/en/article/448/making-a-zfs-4-disk-mirrored-vdev-zpool-on-smartos-on-r720xd</a></p>
+
+<p><a href="http://prefetch.net/blog/index.php/2007/01/04/adding-a-mirror-to-a-device-in-a-zfs-pool/">http://prefetch.net/blog/index.php/2007/01/04/adding-a-mirror-to-a-device-in-a-zfs-pool/</a></p>
+
+<p><a href="http://prefetch.net/blog/index.php/2011/10/15/using-the-zfs-scrub-feature-to-verify-the-integrity-of-your-storage/">http://prefetch.net/blog/index.php/2011/10/15/using-the-zfs-scrub-feature-to-verify-the-integrity-of-your-storage/</a></p>
+
+<pre><code>Adding a mirror to a device in a ZFS pool
+In one of my previous posts, I discussed how to add a disk to a ZFS pool. One thing I failed to mention was the fact that adding a device in this manner creates a second stripe in the pool, which adds no redundancy (in that specific example, I was using hardware RAID). Instead of using the zfs “add” command to add a second stripe to the pool, I could have instead used the “attach” option to create a two way mirror from the existing device:
+$ zpool attach system c1d0s0 c2d0s0
+The attach operation will cause a new top level “mirror” vdev (virtual device) to be created, and both devices will then be associated with that vdev. Once the attach completes, the first device will be synced to the second device. You can monitor the synchronization progress with the zpool utility:
+$ zpool status -v
+pool: system
+state: ONLINE
+status: One or more devices is currently being resilvered.  The pool will
+        continue to function, possibly in a degraded state.
+action: Wait for the resilver to complete.
+scrub: resilver in progress, 3.13% done, 0h15m to go
+config:
+
+        NAME        STATE     READ WRITE CKSUM
+        system      ONLINE       0     0     0
+          mirror    ONLINE       0     0     0
+            c1d0s0  ONLINE       0     0     0
+            c2d0s0  ONLINE       0     0     0
+The more I work with ZFS, the more I dig it!
+</code></pre>
 
 <p>When prompted at install I selected c0t0d0 as the drive for the zones zpool.</p>
 
@@ -283,6 +422,56 @@ fe6b8008-fdcc-44ea-859f-87589a93e25d  OS    8192     192.168.3.61          25   
 
 <pre><code>zpool attach zones c0t0d0 c0d1t0
 zpool add zones mirror c0t2d0 c0t3d0
+
+</code></pre>
+
+<p>note if adding a mirror to a single disk you need to add to the exising disk using</p>
+
+<pre><code>zpool attach zones existingdisk newdisk
+</code></pre>
+
+<p>Output</p>
+
+<pre><code>
+[root@headnode (hat) ~]# zpool status
+  pool: zones
+ state: ONLINE
+  scan: resilvered 49.6G in 0h15m with 0 errors on Wed Dec 23 22:28:07 2015
+config:
+
+        NAME        STATE     READ WRITE CKSUM
+        zones       ONLINE       0     0     0
+          mirror-0  ONLINE       0     0     0
+            c0t0d0  ONLINE       0     0     0
+            c0t2d0  ONLINE       0     0     0
+          c0t1d0    ONLINE       0     0     0
+
+
+[root@headnode (hat) ~]# zpool attach zones c0t1d0 c0t3d0
+
+[root@headnode (hat) ~]# zpool status
+  pool: zones
+ state: ONLINE
+status: One or more devices is currently being resilvered.  The pool will
+        continue to function, possibly in a degraded state.
+action: Wait for the resilver to complete.
+  scan: resilver in progress since Thu Dec 24 01:06:57 2015
+    8.58G scanned out of 24.9G at 732M/s, 0h0m to go
+    6.40M resilvered, 34.51% done
+config:
+
+        NAME        STATE     READ WRITE CKSUM
+        zones       ONLINE       0     0     0
+          mirror-0  ONLINE       0     0     0
+            c0t0d0  ONLINE       0     0     0
+            c0t2d0  ONLINE       0     0     0
+          mirror-1  ONLINE       0     0     0
+            c0t1d0  ONLINE       0     0     0
+            c0t3d0  ONLINE       0     0     0  (resilvering)
+
+
+
+
 </code></pre>
 
 <p>Running zpool status shows the following:</p>
@@ -310,12 +499,12 @@ config:
 </code></pre>
 
 <h3>
-<a id="tools" class="anchor" href="#tools" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tools</h3>
+<a id="tools" class="anchor" href="#tools" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tools</h3>
 
 <p><a href="http://timboudreau.com/blog/smartos/read">http://timboudreau.com/blog/smartos/read</a></p>
 
 <h4>
-<a id="gb--mb-rounding" class="anchor" href="#gb--mb-rounding" aria-hidden="true"><span class="octicon octicon-link"></span></a>GB / MB Rounding</h4>
+<a id="gb--mb-rounding" class="anchor" href="#gb--mb-rounding" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>GB / MB Rounding</h4>
 
 <p>In oder to create a machine via SDC you need the <strong>exact</strong> size (e.g. 40000 mb is not accurate enough) so 40Gb is actually 40960 MB so you need to 40960, no less, no more.... (note google is not strict enough)</p>
 
@@ -324,12 +513,14 @@ config:
 <p><a href="http://www.convertunits.com/from/GB/to/MB">http://www.convertunits.com/from/GB/to/MB</a></p>
 
 <h4>
-<a id="awesome-tips" class="anchor" href="#awesome-tips" aria-hidden="true"><span class="octicon octicon-link"></span></a>AWESOME TIPS</h4>
+<a id="awesome-tips" class="anchor" href="#awesome-tips" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>AWESOME TIPS</h4>
 
 <p><a href="https://wiki.smartos.org/display/DOC/SmartOS+Command+Line+Tips">https://wiki.smartos.org/display/DOC/SmartOS+Command+Line+Tips</a></p>
 
+<p><a href="http://blogoless.blogspot.co.nz/search/label/smartos">http://blogoless.blogspot.co.nz/search/label/smartos</a></p>
+
 <h2>
-<a id="thanks" class="anchor" href="#thanks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Thanks</h2>
+<a id="thanks" class="anchor" href="#thanks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Thanks</h2>
 
 <p>Thanks to everyone whos posts i have used (to many to mention!) but I have back linked where i had them as a reference.</p>
 
