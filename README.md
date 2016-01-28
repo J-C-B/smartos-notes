@@ -105,9 +105,9 @@ zfs set compression=on zones && zfs get compression zones
 zfs get compressratio zones
 ```
 
-##### Error I got after wiping the zpool and then not fresh installing SDC on USB
+##### Error I got after reboot - "requests must originate from CNAPI address"
 
-I found no way out of this except to go back to make a new SDC image... and start from scratch
+I found no way out of this except to go through the zone update process, then I could provision again
 
 ```
 sdcadm post-setup: error: requests must originate from CNAPI address
