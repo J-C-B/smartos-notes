@@ -117,11 +117,15 @@ sdcadm post-setup: error: requests must originate from CNAPI address
 
 Update!
 
+##### Zones
+
 ```
 sdcadm self-update --latest
+```
 
-OUTPUT
+Output
 
+```
 Update to sdcadm 1.9.0 (master-20151221T171321Z-gabeeae7)
 Download update from https://updates.joyent.com
 Run sdcadm installer (log at /var/sdcadm/self-updates/20151222T062616Z/install.log)
@@ -131,7 +135,63 @@ Updated to sdcadm 1.9.0 (master-20151221T171321Z-gabeeae7, elapsed 24s)
 
 https://github.com/joyent/sdcadm/blob/master/docs/update.md
 
+##### USB / Platform
+
+This is to get the latest release of SmartOS: 
+
 ```
+sdcadm platform install --latest
+```
+
+Then you need to assign it with example: 
+
+```
+sdcadm platform assign 20160121T174713Z --all
+```
+
+Then reboot the compute/headnode and verify what the platform is: 
+
+```
+uname -v
+```
+
+Typical output
+
+```
+[root@headnode (hat) ~]# sdcadm platform install --latest
+Using channel release
+Checking latest Platform Image is already installed
+Downloading platform 20160121T174713Z
+    image 14008049-711d-4417-b2bd-0c91d6e32bd0
+    to /var/tmp/platform-release-20160121-20160121T174713Z.tgz
+Installing Platform Image onto USB key
+==> Mounting USB key
+==> Staging 20160121T174713Z
+######################################################################## 100.0%
+==> Unpacking 20160121T174713Z to /mnt/usbkey/os
+==> This may take a while...
+==> Copying 20160121T174713Z to /usbkey/os
+==> Unmounting USB Key
+==> Adding to list of available platforms
+==> Done!
+Platform installer finished successfully
+Proceeding to complete the update
+Installation complete
+You have new mail in /var/mail/root
+[root@headnode (hat) ~]# uname -v
+joyent_20151210T064915Z
+You have new mail in /var/mail/root
+[root@headnode (hat) ~]# sdcadm platform assign 20160121T174713Z --all
+updating headnode 002590d5-384a-0607-0025-90d5384a0e0f to 20160121T174713Z
+Setting boot params for 002590d5-384a-0607-0025-90d5384a0e0f
+Updating booter cache for servers
+Done updating booter caches
+Verifying boot_platform updates
+Cleaned up deprecated 'latest' symlink
+Updating default boot platform to '20160121T174713Z'
+[root@headnode (hat) ~]# uname -v
+joyent_20151210T064915Z
+[root@headnode (hat) ~]#
 
 ```
 
@@ -326,7 +386,7 @@ Output
 
 ```
 
-[root@headnode (hatfields) ~]# zpool status
+[root@headnode (hat) ~]# zpool status
   pool: zones
  state: ONLINE
   scan: resilvered 49.6G in 0h15m with 0 errors on Wed Dec 23 22:28:07 2015
@@ -340,9 +400,9 @@ config:
           c0t1d0    ONLINE       0     0     0
 
 
-[root@headnode (hatfields) ~]# zpool attach zones c0t1d0 c0t3d0
+[root@headnode (hat) ~]# zpool attach zones c0t1d0 c0t3d0
 
-[root@headnode (hatfields) ~]# zpool status
+[root@headnode (hat) ~]# zpool status
   pool: zones
  state: ONLINE
 status: One or more devices is currently being resilvered.  The pool will
