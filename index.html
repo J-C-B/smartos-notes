@@ -30,7 +30,7 @@
 <a id="my-setup" class="anchor" href="#my-setup" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>My Setup</h2>
 
 <ul>
-<li>Dell T601</li>
+<li>Dell T610</li>
 <li>6i raid card</li>
 <li>2 x 300gb drives</li>
 <li>2 x 2 tb drives</li>
@@ -337,43 +337,53 @@ fe6b8008-fdcc-44ea-859f-87589a93e25d  OS    8192     192.168.3.61          25   
 <h3>
 <a id="disk-full-issue" class="anchor" href="#disk-full-issue" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Disk full issue</h3>
 
-<p>ENOSPC, open '/zones...metadata.json'
-SmartOS.</p>
+<p>error on cli</p>
+
+<pre><code>ENOSPC, open '/zones...metadata.json'
+</code></pre>
 
 <p>Issuing this command</p>
 
-<p>vmadm update f7c4fbb0-aa35-41d4-9d21-614caba785c7 max_physical_memory=2048</p>
+<pre><code>vmadm update f7c4fbb0-aa35-41d4-9d21-614caba785c7 max_physical_memory=2048
+</code></pre>
 
 <p>I got an error like</p>
 
-<p>ENOSPC, open '/zones/f7c4fbb0-aa35-41d4-9d21-614caba785c7/config/metadata.json'</p>
+<pre><code>ENOSPC, open '/zones/f7c4fbb0-aa35-41d4-9d21-614caba785c7/config/metadata.json'
+</code></pre>
 
 <p>I try to enter in the zone</p>
 
-<p>zlogin f7c4fbb0-aa35-41d4-9d21-614caba785c7</p>
+<pre><code>zlogin f7c4fbb0-aa35-41d4-9d21-614caba785c7
+</code></pre>
 
 <p>but I got</p>
 
-<p>[Connected to zone 'f7c4fbb0-aa35-41d4-9d21-614caba785c7' pts/12]
-No utmpx entry. You must exec "login" from the lowest level "shell".</p>
+<pre><code>[Connected to zone 'f7c4fbb0-aa35-41d4-9d21-614caba785c7' pts/12]
+No utmpx entry. You must exec "login" from the lowest level "shell".
 
-<p>[Connection to zone 'f7c4fbb0-aa35-41d4-9d21-614caba785c7' pts/12 closed]</p>
+[Connection to zone 'f7c4fbb0-aa35-41d4-9d21-614caba785c7' pts/12 closed]
+</code></pre>
 
 <p>WTF?</p>
 
 <p>The zone reached the zfs disk quota. Disk full.</p>
 
-<p>But also
-vmadm update f7c4fbb0-aa35-41d4-9d21-614caba785c7 quota=50
+<p>But also</p>
+
+<pre><code>vmadm update f7c4fbb0-aa35-41d4-9d21-614caba785c7 quota=50
 returns
-ENOSPC, open '/zones/f7c4fbb0-aa35-41d4-9d21-614caba785c7/config/metadata.json'</p>
+ENOSPC, open '/zones/f7c4fbb0-aa35-41d4-9d21-614caba785c7/config/metadata.json'
+</code></pre>
 
 <p>So the solution is simple:</p>
 
-<p>zfs set quota=40G zones/f7c4fbb0-aa35-41d4-9d21-614caba785c7</p>
+<pre><code>zfs set quota=40G zones/f7c4fbb0-aa35-41d4-9d21-614caba785c7
+</code></pre>
 
-<p>vmadm update f7c4fbb0-aa35-41d4-9d21-614caba785c7 max_physical_memory=2048
-Successfully updated VM f7c4fbb0-aa35-41d4-9d21-614caba785c7</p>
+<pre><code>vmadm update f7c4fbb0-aa35-41d4-9d21-614caba785c7 max_physical_memory=2048
+Successfully updated VM f7c4fbb0-aa35-41d4-9d21-614caba785c7
+</code></pre>
 
 <h3>
 <a id="vnc-notes" class="anchor" href="#vnc-notes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>VNC notes</h3>
