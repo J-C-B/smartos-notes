@@ -6,7 +6,7 @@
 
 ## My Setup
 
-* Dell T601
+* Dell T610
 * 6i raid card
 * 2 x 300gb drives
 * 2 x 2 tb drives
@@ -283,47 +283,51 @@ https://www.youtube.com/watch?v=7xrb_WZZ-Cs
 https://wiki.smartos.org/display/DOC/Using+vmadm+to+manage+virtual+machines#Usingvmadmtomanagevirtualmachines-DeletingaVM
 
 ### Disk full issue
-
+error on cli
+```
 ENOSPC, open '/zones...metadata.json'
-SmartOS.
+```
 
 Issuing this command
-
+```
 vmadm update f7c4fbb0-aa35-41d4-9d21-614caba785c7 max_physical_memory=2048
-
+```
 I got an error like
-
+```
 ENOSPC, open '/zones/f7c4fbb0-aa35-41d4-9d21-614caba785c7/config/metadata.json'
-
+```
 
 I try to enter in the zone
-
+```
 zlogin f7c4fbb0-aa35-41d4-9d21-614caba785c7
-
+```
 but I got
-
+```
 [Connected to zone 'f7c4fbb0-aa35-41d4-9d21-614caba785c7' pts/12]
 No utmpx entry. You must exec "login" from the lowest level "shell".
 
 [Connection to zone 'f7c4fbb0-aa35-41d4-9d21-614caba785c7' pts/12 closed]
-
+```
 
 WTF?
 
 The zone reached the zfs disk quota. Disk full.
 
 But also
+```
 vmadm update f7c4fbb0-aa35-41d4-9d21-614caba785c7 quota=50
 returns
 ENOSPC, open '/zones/f7c4fbb0-aa35-41d4-9d21-614caba785c7/config/metadata.json'
-
+```
 
 So the solution is simple:
-
+```
 zfs set quota=40G zones/f7c4fbb0-aa35-41d4-9d21-614caba785c7
-
+```
+```
 vmadm update f7c4fbb0-aa35-41d4-9d21-614caba785c7 max_physical_memory=2048
 Successfully updated VM f7c4fbb0-aa35-41d4-9d21-614caba785c7
+```
 
 ### VNC notes
 
